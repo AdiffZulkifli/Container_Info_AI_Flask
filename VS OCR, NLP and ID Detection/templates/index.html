@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Container ID OCR Test</title>
+</head>
+<body style="font-family: Arial; margin: 40px;">
+  <h2>Upload Image to Detect Container ID</h2>
+  <form id="uploadForm" enctype="multipart/form-data" method="post">
+    <input type="file" name="image" accept="image/*" required>
+    <button type="submit">Scan</button>
+  </form>
+
+  <h3>Result:</h3>
+  <pre id="result" style="background:#f2f2f2; padding:10px;"></pre>
+
+  <h3>Annotated Image:</h3>
+  <img id="preview" src="" style="max-width: 700px; display:none; border: 2px solid #ccc;"/>
+
+  <script>
+    document.getElementById("uploadForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const res = await fetch("/ocr", { method: "POST", body: formData });
+      const data = await res.json();
+      document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+      if (data.annotated_image) {
+        document.getElementById("preview").src = data.annotated_image;
+        document.getElementById("preview").style.display = "block";
+      }
+    };
+  </script>
+</body>
+</html>
